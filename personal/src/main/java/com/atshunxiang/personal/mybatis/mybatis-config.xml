@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration
+		PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 实体类,简称 -设置别名 -->
+	<typeAliases>
+		<typeAlias alias="BoKe" type="com.atshunxiang.personal.entity.BoKe" />
+
+	</typeAliases>
+	<!-- 实体接口映射资源 -->
+	<!--
+		说明：如果xxMapper.xml配置文件放在和xxMapper.java统一目录下，mappers也可以省略，
+		因为org.mybatis.spring.mapper.MapperFactoryBean默认会去查找与xxMapper.java
+		相同目录和名称的xxMapper.xml
+	<mappers>
+		<mapper resource="com.rentian.pbb.entity.User" />
+	</mappers>
+	-->
+	 
+	<!--<plugins>
+   com.github.pagehelper为PageHelper类所在包名 
+  <plugin interceptor="com.github.pagehelper.PageHelper">
+     设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL六种数据库    
+    <property name="dialect" value="mysql"/>
+  </plugin>
+</plugins>-->
+</configuration>  
