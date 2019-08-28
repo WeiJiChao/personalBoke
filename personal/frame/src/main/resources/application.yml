@@ -1,0 +1,23 @@
+server:
+  port: 8000
+  url: http://localhost:8000
+spring:
+  profiles:
+    #表示所用配置文件为application-dev.yml
+    active: dev
+  jackson:
+    time-zone: GMT+8
+  data:
+    redis:
+      repositories:
+        enabled: false
+#logging:
+#  file: logs/demo.log
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath*:com/jwBlog/*/dao/*.xml
+  type-aliases-package: com.jwBlog.*.dao
+#  type-aliases-package: classpath*:com.jwBlog.*.dao
+#验证码有效时间/分钟
+code:
+  expiration: 5

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.security.dao.SecurityUserDao">
+    <resultMap type="com.jwBlog.security.entity.SecurityUserEntity" id="securityUserMap">
+		<result property="id" column="id"/>
+		<result property="departmentId" column="departmentId"/>
+		<result property="depName" column="depName"/>
+		<result property="name" column="name"/>
+		<result property="realName" column="realName"/>
+		<result property="identity" column="identity"/>
+		<result property="job" column="job"/>
+
+		<result property="code" column="code"/>
+		<result property="password" column="password"/>
+		<result property="salt" column="salt"/>
+		<result property="active" column="active"/>
+
+		<result property="loginFailed" column="loginFailed"/>
+		<result property="departmentList" column="departmentList"/>
+		<result property="departmentListName" column="departmentListName"/>
+		<result property="lastPassTime" column="lastPassTime"/>
+		<result property="createTime" column="createTime"/>
+		<result property="createUser" column="createUser"/>
+		<result property="lastModifyTime" column="lastModifyTime"/>
+		<result property="lastModifyUser" column="lastModifyUser"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		departmentId,
+		name,
+		realName,
+		code,
+		password,
+		salt,
+		identity,
+		job,
+		active,
+		loginFailed,
+		departmentList,
+		departmentListName,
+		lastPassTime,
+		createTime,
+		createUser,
+		lastModifyTime,
+		lastModifyUser
+    </sql>
+	<sql id="Base_Column_join_List" >
+		u.id,
+		u.departmentId,
+		u.name,
+		u.realName,
+		u.code,
+		u.password,
+		u.salt,
+		u.identity,
+		u.job,
+		u.active,
+		u.loginFailed,
+		u.departmentList,
+		u.departmentListName,
+		u.lastPassTime,
+		u.createTime,
+		u.createUser,
+		u.lastModifyTime,
+		u.lastModifyUser
+	</sql>
+	<select id="queryObject" resultType="com.jwBlog.security.entity.SecurityUserEntity" resultMap="securityUserMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityUser
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.security.entity.SecurityUserEntity" resultMap="securityUserMap">
+		select
+		<include refid="Base_Column_join_List" />,'' AS depName
+		from SecurityUser u
+		<where>
+			<if test="code != null and code.trim() != ''" >
+				AND u.code like concat(concat('%',#{code}),'%')
+			</if>
+			<if test="active != null and active.trim() != ''" >
+				AND u.active=#{active}
+			</if>
+			<if test="realName != null and realName.trim() != ''" >
+				AND u.realName like concat(concat('%',#{realName}),'%')
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by u.${sidx} ${order}
+            </when>
+			<otherwise>
+                order by u.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.security.entity.SecurityUserEntity" resultMap="securityUserMap">
+        select
+        <include refid="Base_Column_List" />
+        from SecurityUser u
+		<where>
+			<if test="code != null and code.trim() != ''" >
+				AND u.code like concat(concat('%',#{code}),'%')
+			</if>
+			<if test="active != null and active.trim() != ''" >
+				AND u.active=#{active}
+			</if>
+			<if test="realName != null and realName.trim() != ''" >
+				AND u.realName like concat(concat('%',#{realName}),'%')
+			</if>
+		</where>
+    </select>
+
+	<!--根据登陆用户查询有效的用户-->
+	<select id="queryByLoginName" resultType="com.jwBlog.security.entity.SecurityUserEntity" resultMap="securityUserMap">
+		select
+		<include refid="Base_Column_join_List" />,'' AS depName
+		from SecurityUser u
+		where u.code = #{0}
+	</select>
+
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from SecurityUser u
+		<where>
+			<if test="code != null and code.trim() != ''" >
+				AND u.code like concat(concat('%',#{code}),'%')
+			</if>
+			<if test="active != null and active.trim() != ''" >
+				AND u.active=#{active}
+			</if>
+			<if test="realName != null and realName.trim() != ''" >
+				AND u.realName like concat(concat('%',#{realName}),'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.jwBlog.security.entity.SecurityUserEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into SecurityUser
+		(
+			`departmentId`,
+			`name`,
+			`realName`,
+			`code`,
+			`password`,
+			`salt`,
+			`job`,
+			`identity`,
+			`active`,
+			`loginFailed`,
+			`departmentList`,
+			`departmentListName`,
+			`lastPassTime`,
+			`createTime`,
+			`createUser`,
+			`lastModifyTime`,
+			`lastModifyUser`
+		)
+		values
+		(
+			#{departmentId},
+			#{name},
+			#{realName},
+			#{code},
+			#{password},
+			#{salt},
+			#{job},
+			#{identity},
+			#{active},
+			#{loginFailed},
+			#{departmentList},
+			#{departmentListName},
+			#{lastPassTime},
+			#{createTime},
+			#{createUser},
+			#{lastModifyTime},
+			#{lastModifyUser}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.security.entity.SecurityUserEntity">
+		update SecurityUser
+		<set>
+			<if test="departmentId != null">`departmentId` = #{departmentId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="realName != null">`realName` = #{realName}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="salt != null">`salt` = #{salt}, </if>
+			<if test="job != null">`job` = #{job}, </if>
+			<if test="identity != null">`identity` = #{identity}, </if>
+			<if test="active != null">`active` = #{active}, </if>
+			<if test="loginFailed != null">`loginFailed` = #{loginFailed}, </if>
+			<if test="departmentList != null">`departmentList` = #{departmentList}, </if>
+			<if test="departmentListName != null">`departmentListName` = #{departmentListName}, </if>
+			<if test="lastPassTime != null">`lastPassTime` = #{lastPassTime}, </if>
+			<if test="createTime != null">`createTime` = #{createTime}, </if>
+			<if test="createUser != null">`createUser` = #{createUser}, </if>
+			<if test="lastModifyTime != null">`lastModifyTime` = #{lastModifyTime}, </if>
+			<if test="lastModifyUser != null">`lastModifyUser` = #{lastModifyUser}</if>
+		</set>
+		where id = #{id}
+	</update>
+	<update id="updatePassword" parameterType="java.util.Map">
+		update SecurityUser
+		set password=#{password},salt=#{salt}
+		where id = #{id}
+	</update>
+
+	<!--批量重置密码-->
+	<update id="resetPassWordBatch" parameterType="java.util.Map">
+		update SecurityUser
+		set password=#{password},salt=#{salt}
+		where code IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	<!--重置密码-->
+	<update id="resetPassWord" parameterType="java.util.Map">
+		update SecurityUser
+		set password=#{password},salt=#{salt}
+		where code = #{code}
+	</update>
+
+	<!--批量更新用户状态-->
+	<update id="updateBatchStatus" parameterType="java.util.Map">
+		update SecurityUser
+		set active=#{active}
+		<if test="lastModifyTime != null">,`lastModifyTime` = #{lastModifyTime} </if>
+		<if test="lastModifyUser != null">,`lastModifyUser` = #{lastModifyUser} </if>
+		where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	<delete id="delete">
+		delete from SecurityUser where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from SecurityUser where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="checkCode" resultType="Integer">
+		select count(*) from SecurityUser where id != #{id}  and code= #{code}
+	</select>
+</mapper>

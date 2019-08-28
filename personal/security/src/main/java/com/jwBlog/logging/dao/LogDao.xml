@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.logging.dao.LogDao">
+    <resultMap type="com.jwBlog.logging.entity.LogEntity" id="logMap">
+		<result property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="description" column="description"/>
+		<result property="method" column="method"/>
+		<result property="params" column="params"/>
+		<result property="log_type" column="logType"/>
+		<result property="request_ip" column="requestIp"/>
+		<result property="time" column="time"/>
+		<result property="exception_detail" column="exceptionDetail"/>
+		<result property="create_time" column="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+		id, 
+		username,
+		description,
+		method,
+		params,
+		log_type,
+		request_ip,
+		time,
+		exception_detail,
+		create_time
+    </sql>
+
+	<select id="queryObject" resultType="com.jwBlog.logging.entity.LogEntity" resultMap="logMap">
+		select
+		<include refid="Base_Column_List" />
+		from log m
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.logging.entity.LogEntity" resultMap="logMap">
+		select
+		<include refid="Base_Column_List" />
+		from log
+		<where>
+			<if test="username != null and username.trim() != ''" >
+				AND username like concat(concat('%',#{username}),'%')
+			</if>
+			<if test="logType != null and logType.trim() != ''" >
+				AND log_type=#{logType}
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.logging.entity.LogEntity" resultMap="logMap">
+        select
+        <include refid="Base_Column_List" />
+        from log
+		<where>
+			<if test="username != null and username.trim() != ''" >
+				AND username like concat(concat('%',#{username}),'%')
+			</if>
+			<if test="logType != null and logType.trim() != ''" >
+				AND log_type=#{logType}
+			</if>
+		</where>
+    </select>
+
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from log
+		<where>
+			<if test="username != null and username.trim() != ''" >
+				AND username like concat(concat('%',#{username}),'%')
+			</if>
+			<if test="logType != null and logType.trim() != ''" >
+				AND log_type=#{logType}
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.jwBlog.logging.entity.LogEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into log
+		(
+			`username`,
+			`description`,
+			`method`,
+			`params`,
+			`log_type`,
+			`request_ip`,
+			`time`,
+			`exception_detail`,
+			`create_time`
+		)
+		values
+		(
+			#{username},
+			#{description},
+			#{method},
+			#{params},
+			#{logType},
+			#{requestIp},
+			#{time},
+			#{exceptionDetail},
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.logging.entity.LogEntity">
+		update log
+		<set>
+			<if test="username != null">`username` = #{username}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="method != null">`method` = #{method}, </if>
+			<if test="params != null">`params` = #{params}, </if>
+			<if test="logType != null">`log_type` = #{logType}, </if>
+			<if test="requestIp != null">`request_ip` = #{requestIp}, </if>
+			<if test="time != null">`time` = #{time}, </if>
+			<if test="exceptionDetail != null">`exception_detail` = #{exceptionDetail}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from log where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="findIp" resultType="long">
+		select count(*) FROM (select request_ip FROM log where create_time between #{dateFrom} and #{dateTo} GROUP BY request_ip) as s
+	</select>
+</mapper>

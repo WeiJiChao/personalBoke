@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.security.dao.SecurityModuleDao">
+    <resultMap type="com.jwBlog.security.entity.SecurityModuleEntity" id="securityModuleMap">
+		<result property="id" column="id"/>
+		<result property="pid" column="pid"/>
+		<result property="parentName" column="parentName"/>
+		<result property="code" column="code"/>
+		<result property="name" column="name"/>
+		<result property="show_name" column="showName"/>
+		<result property="component" column="component"/>
+		<result property="sort_index" column="sortIndex"/>
+		<result property="icon" column="icon"/>
+		<result property="path" column="path"/>
+		<result property="active" column="active"/>
+		<result property="is_frame" column="isFrame"/>
+		<result property="is_open_new" column="isOpenNew"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+		id, 
+		pid,
+		code, 
+		name, 
+		show_name,
+		component,
+		sort_index,
+		icon,
+		path,
+		active,
+		is_frame,
+		is_open_new
+    </sql>
+
+	<select id="queryObject" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select
+		<include refid="Base_Column_List" />,(SELECT tm.name FROM SecurityModule tm WHERE tm.id=m.pid ) AS parentName
+		from SecurityModule m
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityModule
+        <where>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+			<if test="code != null and code.trim() != ''">+
+				and code like concat(concat('%',#{code}),'%')
+			</if>
+        </where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by code desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+        select
+        <include refid="Base_Column_List" />
+        from SecurityModule
+        WHERE 1=1
+    </select>
+
+	<!--根据父菜单Id查询菜单-->
+	<select id="queryListParentId" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select
+		<include refid="Base_Column_List" />,(SELECT tm.name FROM SecurityModule tm WHERE tm.id=m.pid ) AS parentName
+		from SecurityModule m
+		where pid = #{value} ORDER BY sort_index
+	</select>
+
+	<!--根据登陆用户Id,查询出所有授权菜单-->
+	<select id="queryByUserId" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select DISTINCT
+		m.*,(SELECT tm.name FROM SecurityModule tm WHERE tm.id=m.pid ) AS parentName
+		FROM SecurityUserRole ur LEFT JOIN
+		SecurityRole r on ur.roleId=r.id LEFT JOIN
+		SecurityRoleModule rm ON r.id=rm.roleId LEFT JOIN
+		SecurityModule m on m.id=rm.moduleId
+		WHERE ur.userId= #{userId} AND r.active = #{active} AND m.id IS NOT NULL ORDER BY pid,sort_index;
+	</select>
+	<select id="queryByRoleId" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select
+		r.id,r.name,r.show_name,r.active
+		from SecurityRoleModule ur
+		LEFT JOIN SecurityModule r ON ur.moduleId=r.id
+		where ur.roleId = #{roleId} AND r.active = #{active}
+	</select>
+
+	<!--查询所有不包括按钮 的菜单-->
+	<select id="queryNotButtonList" resultType="com.jwBlog.security.entity.SecurityModuleEntity" resultMap="securityModuleMap">
+		select
+		<include refid="Base_Column_List" />,(SELECT tm.name FROM SecurityModule tm WHERE tm.id=m.pid ) AS parentName
+		FROM SecurityModule m
+		WHERE m.isMenu IN
+		<foreach item="type" collection="array" open="(" separator="," close=")">
+			#{type}
+		</foreach>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from SecurityModule
+		<where>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+			<if test="code != null and code.trim() != ''">+
+				and code like concat(concat('%',#{code}),'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.jwBlog.security.entity.SecurityModuleEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into SecurityModule
+		(
+			`pid`,
+			`code`, 
+			`name`, 
+			`show_name`,
+			`component`,
+			`sort_index`,
+			`icon`,
+			`path`,
+			`active`,
+			`is_frame`,
+			`is_open_new`
+		)
+		values
+		(
+			#{pid},
+			#{code},
+			#{name},
+			#{showName},
+			#{component},
+			#{sortIndex},
+			#{icon},
+			#{path},
+			#{active},
+			#{isFrame},
+			#{isOpenNew}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.security.entity.SecurityModuleEntity">
+		update SecurityModule
+		<set>
+			<if test="pid != null">`pid` = #{pid}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="showName != null">`show_name` = #{showName}, </if>
+			<if test="component != null">`component` = #{component}, </if>
+			<if test="sortIndex != null">`sort_index` = #{sortIndex}, </if>
+			<if test="icon != null">`icon` = #{icon}, </if>
+			<if test="path != null">`path` = #{path}, </if>
+			<if test="active != null">`active` = #{active}, </if>
+			<if test="isFrame != null">`is_frame` = #{isFrame}, </if>
+			<if test="isOpenNew != null">`is_open_new` = #{isOpenNew} </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from SecurityModule where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from SecurityModule where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="checkName" resultType="Integer">
+		select count(*) from SecurityModule where id != #{id} and pid != #{pid}  and name= #{name}
+	</select>
+	<select id="checkCode" resultType="Integer">
+		select count(*) from SecurityModule where id != #{id} and pid != #{pid}  and code= #{code}
+	</select>
+</mapper>

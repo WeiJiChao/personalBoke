@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.security.dao.SecurityRolePermissionDao">
+	<resultMap type="com.jwBlog.security.entity.SecurityRolePermissionEntity" id="securityRolePermissionMap">
+		<result property="roleId" column="roleId"/>
+		<result property="permissionId" column="permissionId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		roleId,
+		permissionId
+    </sql>
+
+	<select id="queryObject" resultType="com.jwBlog.security.entity.SecurityRolePermissionEntity" resultMap="securityRolePermissionMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityRolePermission
+		where roleId = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.security.entity.SecurityRolePermissionEntity" resultMap="securityRolePermissionMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityRolePermission
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by roleId desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.security.entity.SecurityRolePermissionEntity" resultMap="securityRolePermissionMap">
+        select
+        <include refid="Base_Column_List" />
+        from SecurityRolePermission
+        WHERE 1=1
+    </select>
+	<select id="queryListByRoleId" resultType="String">
+		select
+		permissionId AS id
+		from SecurityRolePermission WHERE roleId=#{roleId}
+	</select>
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from SecurityRolePermission
+	</select>
+	 
+	<insert id="save" parameterType="com.jwBlog.security.entity.SecurityRolePermissionEntity">
+		insert into SecurityRolePermission
+		(
+			`roleId`,
+			`permissionId`
+		)
+		values
+		<foreach collection="menuIdList" item="item" index="index" separator="," >
+			(
+			#{roleId},
+			#{item}
+			)
+		</foreach>
+	</insert>
+	<insert id="saveBatch" parameterType="java.util.List">
+		insert into SecurityRolePermission
+		(
+		`roleId`,
+		`permissionId`
+		)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.roleId,jdbcType=INTEGER}, #{item.permissionId,jdbcType=INTEGER})
+		</foreach>
+	</insert>
+	<update id="update" parameterType="com.jwBlog.security.entity.SecurityRolePermissionEntity">
+		update SecurityRolePermission
+		<set>
+			<if test="permissionId != null">`permissionId` = #{permissionId}</if>
+		</set>
+		where roleId = #{roleid}
+	</update>
+	
+	<delete id="delete">
+		delete from SecurityRolePermission where roleId = #{value}
+	</delete>
+
+	<delete id="deleteByRole">
+		delete from SecurityRolePermission where roleId = #{value}
+	</delete>
+	<delete id="deleteByPermission">
+		delete from SecurityRolePermission where permissionId = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from SecurityRolePermission where roleId in
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</delete>
+
+</mapper>

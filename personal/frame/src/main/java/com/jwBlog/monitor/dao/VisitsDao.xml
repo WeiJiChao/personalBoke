@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.monitor.dao.VisitsDao">
+    <resultMap type="com.jwBlog.monitor.entity.VisitsEntity" id="visitsMap">
+		<result property="id" column="id"/>
+		<result property="date" column="date"/>
+		<result property="ip_counts" column="ipCounts"/>
+		<result property="pv_counts" column="pvCounts"/>
+		<result property="week_day" column="weekDay"/>
+		<result property="create_time" column="createTime"/>
+    </resultMap>
+
+	<select id="findByDate" resultType="com.jwBlog.monitor.entity.VisitsEntity" resultMap="visitsMap">
+		select id,`date`,`ip_counts`, `pv_counts`,`week_day`,`create_time`
+		from Visits m
+		where date = #{value}
+	</select>
+
+	<select id="findAllVisits" resultType="com.jwBlog.monitor.entity.VisitsEntity" resultMap="visitsMap">
+		select id,`date`,`ip_counts`, `pv_counts`,`week_day`,`create_time`
+		from Visits
+		WHERE create_time  between #{dateFrom} and #{dateTo} order by date desc
+	</select>
+
+	<insert id="save" parameterType="com.jwBlog.monitor.entity.VisitsEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into Visits
+		(
+			`date`,
+			`ip_counts`,
+			`pv_counts`,
+			`week_day`,
+			`create_time`
+		)
+		values
+		(
+			#{date},
+			#{ipCounts},
+			#{pvCounts},
+			#{weekDay},
+			#{createTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.monitor.entity.VisitsEntity">
+		update Visits
+		<set>
+			<if test="ipCounts != null">`ip_counts` = #{ipCounts}, </if>
+			<if test="pvCounts != null">`pv_counts` = #{pvCounts}</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

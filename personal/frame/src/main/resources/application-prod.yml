@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    db:
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql://49.234.232.172:3306/boke?useOldAliasMetadataBehavior=true&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+      username: root
+      password: 12345678
+      tomcat:
+        initialSize: 1
+        min-idle: 1
+        max-idle: 20
+        # 配置获取连接等待超时的时间
+        max-wait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 30000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,log4j
+      logSlowSql: true
+  redis:
+    #数据库索引
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+    jedis:
+      pool:
+        #最大连接数
+        max-active: 100
+        #最大阻塞等待时间(负数表示没限制)
+        max-wait: 2000
+        #最大空闲
+        max-idle: 500
+        #最小空闲
+        min-idle: 8
+    #连接超时时间
+    timeout: 5000
+generator:
+  enabled: true
+#jwt
+jwt:
+  header: Authorization
+  secret: mySecret
+  # token 过期时间 2个小时
+  expiration: 7200000
+  auth:
+    # 授权路径
+    path: /login
+    # 获取用户信息
+    account: /info

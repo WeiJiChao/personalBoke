@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.security.dao.SecurityPermissionDao">
+    <resultMap type="com.jwBlog.security.entity.SecurityPermissionEntity" id="securityPermissionMap">
+		<result property="id" column="id"/>
+		<result property="pid" column="pid"/>
+		<result property="parentName" column="parentName"/>
+		<result property="alias" column="alias"/>
+		<result property="name" column="name"/>
+		<result property="show_name" column="showName"/>
+		<result property="sort_index" column="sortIndex"/>
+		<result property="active" column="active"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+		id, 
+		pid,
+		alias,
+		name, 
+		show_name,
+		sort_index,
+		active
+    </sql>
+
+	<select id="queryObject" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+		select
+		<include refid="Base_Column_List" />,(SELECT tm.name FROM SecurityPermission tm WHERE tm.id=m.pid ) AS parentName
+		from SecurityPermission m
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityPermission
+		<where>
+			<if test="alias != null and alias.trim() != ''">
+				and alias like concat(concat('%',#{alias}),'%')
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id asc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+        select
+        <include refid="Base_Column_List" />
+        from SecurityPermission
+		<where>
+			<if test="alias != null and alias.trim() != ''">
+				and alias like concat(concat('%',#{alias}),'%')
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+    </select>
+
+	<!--根据父菜单Id查询菜单-->
+	<select id="queryListParentId" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+		select
+		<include refid="Base_Column_List" />,(SELECT tm.name FROM SecurityPermission tm WHERE tm.id=m.pid ) AS parentName
+		from SecurityPermission m
+		where pid = #{pid} ORDER BY sort_index
+	</select>
+
+	<!--根据登陆用户Id,查询出所有授权菜单-->
+	<select id="queryByUserId" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+		select DISTINCT
+		m.*,(SELECT tm.name FROM SecurityPermission tm WHERE tm.id=m.pid ) AS parentName
+		FROM SecurityUserRole ur LEFT JOIN
+		SecurityRole r on ur.roleId=r.id LEFT JOIN
+		SecurityRolePermission rm ON r.id=rm.roleId LEFT JOIN
+		SecurityPermission m on m.id=rm.permissionId
+		WHERE ur.userId= #{userId} AND r.active = #{active} AND m.active = #{active} ORDER BY pid,sort_index;
+	</select>
+	<select id="queryByRoleId" resultType="com.jwBlog.security.entity.SecurityPermissionEntity" resultMap="securityPermissionMap">
+		select
+		r.id,r.name,r.show_name,r.active
+		from SecurityRolePermission ur
+		LEFT JOIN SecurityPermission r ON ur.permissionId=r.id
+		where ur.roleId = #{roleId} AND r.active = #{active}
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from SecurityPermission
+		<where>
+			<if test="alias != null and alias.trim() != ''">
+				and alias like concat(concat('%',#{alias}),'%')
+			</if>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.jwBlog.security.entity.SecurityPermissionEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into SecurityPermission
+		(
+			`pid`,
+			`alias`,
+			`name`,
+			`show_name`,
+			`sort_index`,
+			`active`
+		)
+		values
+		(
+			#{pid},
+			#{alias},
+			#{name},
+			#{showName},
+			#{sortIndex},
+			#{active}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.security.entity.SecurityPermissionEntity">
+		update SecurityPermission
+		<set>
+			<if test="pid != null">`pid` = #{pid}, </if>
+			<if test="alias != null">`alias` = #{alias}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="showName != null">`show_name` = #{showName}, </if>
+			<if test="sortIndex != null">`sort_index` = #{sortIndex}, </if>
+			<if test="active != null">`active` = #{active} </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from SecurityPermission where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from SecurityPermission where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="checkName" resultType="Integer">
+		select count(*) from SecurityPermission where id != #{id} and pid != #{pid}  and name= #{name}
+	</select>
+	<select id="checkAlias" resultType="Integer">
+		select count(*) from SecurityPermission where id != #{id} and pid != #{pid}  and alias= #{alias}
+	</select>
+</mapper>

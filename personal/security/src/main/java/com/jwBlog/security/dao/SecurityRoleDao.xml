@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jwBlog.security.dao.SecurityRoleDao">
+    <resultMap type="com.jwBlog.security.entity.SecurityRoleEntity" id="securityRoleMap">
+		<result property="id" column="id"/>
+		<result property="platId" column="platId"/>
+		<result property="name" column="name"/>
+		<result property="show_name" column="showName"/>
+		<result property="active" column="active"/>
+		<result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		id, 
+		platId,
+		name,
+		show_name,
+		active,
+		remark
+    </sql>
+
+	<select id="queryObject" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityRole
+		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+		select
+		<include refid="Base_Column_List" />
+		from SecurityRole
+		<where>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+        select
+        <include refid="Base_Column_List" />
+        from SecurityRole
+		<where>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from SecurityRole
+		<where>
+			<if test="name != null and name.trim() != ''">
+				and name like concat(concat('%',#{name}),'%')
+			</if>
+		</where>
+	</select>
+	<select id="queryByUserId" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+		select
+		r.id,r.name,r.show_name,r.active
+		from SecurityUserRole ur
+		LEFT JOIN SecurityRole r ON ur.roleId=r.id
+		where ur.userId = #{userId} AND r.active = #{active}
+	</select>
+	<select id="queryByModuleId" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+		select
+		r.id,r.name,r.show_name,r.active
+		from SecurityRoleModule ur
+		LEFT JOIN SecurityRole r ON ur.roleId=r.id
+		where ur.moduleId = #{moduleId} AND r.active = #{active}
+	</select>
+	<select id="queryByPermissionId" resultType="com.jwBlog.security.entity.SecurityRoleEntity" resultMap="securityRoleMap">
+		select
+		r.id,r.name,r.show_name,r.active
+		from SecurityRolePermission ur
+		LEFT JOIN SecurityRole r ON ur.roleId=r.id
+		where ur.permissionId = #{permissionId} AND r.active = #{active}
+	</select>
+	<insert id="save" parameterType="com.jwBlog.security.entity.SecurityRoleEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into SecurityRole
+		(
+			`platId`,
+			`name`,
+			`show_name`,
+			`active`,
+			`remark`
+		)
+		values
+		(
+			#{platId},
+			#{name},
+			#{showName},
+			#{active},
+			#{remark}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.jwBlog.security.entity.SecurityRoleEntity">
+		update SecurityRole
+		<set>
+			<if test="platId != null">`plat_id` = #{platId}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="showName != null">`show_name` = #{showName}, </if>
+			<if test="active != null">`active` = #{active}, </if>
+			<if test="remark != null">`remark` = #{remark} </if>
+		</set>
+		where id = #{id}
+	</update>
+	<!--批量更新角色状态-->
+	<update id="updateBatchStatus" parameterType="java.util.Map">
+		update SecurityRole
+		set active=#{active}
+		where id IN
+		<foreach item="id" collection="ids" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<delete id="delete">
+		delete from SecurityRole where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from SecurityRole where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<select id="checkName" resultType="Integer">
+		select count(*) from SecurityRole where id != #{id}  and name= #{name}
+	</select>
+</mapper>
