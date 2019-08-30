@@ -1,7 +1,7 @@
-package com.atshunxiang.personal.controller;
+package com.jwBlog.personal.controller;
 
-import com.atshunxiang.personal.bean.LoginRequest;
-import com.atshunxiang.personal.service.LoginService;
+import com.jwBlog.personal.bean.LoginRequest;
+import com.jwBlog.personal.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

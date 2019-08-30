@@ -1,4 +1,4 @@
-package com.atshunxiang.personal.entity;
+package com.jwBlog.personal.entity;
 
 import java.sql.Date;
 

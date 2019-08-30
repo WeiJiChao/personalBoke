@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.atshunxiang.personal.dao.DAO">
+<mapper namespace="com.jwBlog.personal.dao.BoKeDAO">
 
 <!--  博客列表展示-->
-<select id="list" resultType="com.atshunxiang.personal.entity.BoKe">
+<select id="list" resultType="com.jwBlog.personal.entity.BoKe">
 		SELECT	*  FROM  boke where  recordStatus = "1" order by createDate desc	  ;
 </select>
 

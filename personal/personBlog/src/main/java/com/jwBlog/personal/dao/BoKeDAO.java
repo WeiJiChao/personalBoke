@@ -1,15 +1,15 @@
-package com.atshunxiang.personal.dao;
+package com.jwBlog.personal.dao;
 
 
 
-import com.atshunxiang.personal.entity.BoKe;
+import com.jwBlog.personal.entity.BoKe;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Date;
 import java.util.List;
 
 @Mapper
-public interface DAO {
+public interface BoKeDAO {
 
 	 List<BoKe> list();
 

@@ -1,9 +1,9 @@
-package com.atshunxiang.personal.controller;
+package com.jwBlog.personal.controller;
 
-import com.atshunxiang.personal.bean.BoKeDeleteRequest;
-import com.atshunxiang.personal.bean.BoKeNewRequest;
-import com.atshunxiang.personal.entity.BoKe;
-import com.atshunxiang.personal.service.BoKeActionService;
+import com.jwBlog.personal.bean.BoKeDeleteRequest;
+import com.jwBlog.personal.bean.BoKeNewRequest;
+import com.jwBlog.personal.entity.BoKe;
+import com.jwBlog.personal.service.BoKeActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

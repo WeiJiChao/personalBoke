@@ -1,4 +1,4 @@
-package com.atshunxiang.personal.bean;
+package com.jwBlog.personal.bean;
 
 /**
  * @author jw

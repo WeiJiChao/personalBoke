@@ -1,8 +1,8 @@
-package com.atshunxiang.personal.service;
+package com.jwBlog.personal.service;
 
-import com.atshunxiang.personal.bean.BoKeDeleteRequest;
-import com.atshunxiang.personal.bean.BoKeNewRequest;
-import com.atshunxiang.personal.entity.BoKe;
+import com.jwBlog.personal.bean.BoKeDeleteRequest;
+import com.jwBlog.personal.bean.BoKeNewRequest;
+import com.jwBlog.personal.entity.BoKe;
 
 import java.util.List;
 
