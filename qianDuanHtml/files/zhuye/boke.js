@@ -5,8 +5,8 @@ $(document).ready(function() {
 
 
 function list(){
-    // var url = "http://49.234.232.172:8081/myBlog/boKe/list";
-    var url = "http://192.168.50.86:8090/myBlog/boKe/list";
+    var url = "http://49.234.232.172:8081/myBlog/boKe/list";
+    // var url = "http://192.168.50.86:8090/myBlog/boKe/list";
     $.ajax({
         url : url,
         cache: false,
@@ -24,8 +24,8 @@ function list(){
 //新增博客
 function newBoKeTiaoZhuan() {
 
-    // window.location.href="/htmlTestSee/new.html";
-    window.location.href="/qianDuanHtml/new.html";
+    window.location.href="/htmlTestSee/new.html";
+    // window.location.href="/qianDuanHtml/new.html";
 }
 
 // 插入到列表中去
@@ -55,8 +55,8 @@ function insertTable(data){
 
 
         function list(){
-            // var url = "http://49.234.232.172:8081/myBlog/boKe/list";
-            var url = "http://192.168.50.86:8090/myBlog/boKe/list";
+            var url = "http://49.234.232.172:8081/myBlog/boKe/list";
+            // var url = "http://192.168.50.86:8090/myBlog/boKe/list";
             $.ajax({
                 url : url,
                 cache: false,
@@ -74,8 +74,8 @@ function insertTable(data){
 //新增博客
         function newBoKeTiaoZhuan() {
 
-            // window.location.href="/htmlTestSee/new.html";
-            window.location.href="/qianDuanHtml/new.html";
+            window.location.href="/htmlTestSee/new.html";
+            // window.location.href="/qianDuanHtml/new.html";
         }
 
 // 插入到列表中去
@@ -125,8 +125,8 @@ function insertTable(data){
             var title=$(obj).find('input:eq(1)').val();
             var flag = confirm("确定要删除" + title + "的信息吗?");
             if(flag){
-                // var url = "http://49.234.232.172:8081/myBlog/boKe/deleteBoKe";
-                var url = "http://192.168.50.86:8090/myBlog/boKe/deleteBoKe";
+                var url = "http://49.234.232.172:8081/myBlog/boKe/deleteBoKe";
+                // var url = "http://192.168.50.86:8090/myBlog/boKe/deleteBoKe";
                 $.ajax({
                     url : url,
                     cache: false,
@@ -136,8 +136,8 @@ function insertTable(data){
                     dataType : "json",
                     success : function(data){
                         alert("已经丢进垃圾桶~~~");
-                        // window.location.href="/htmlTestSee/boke.html";
-                        window.location.href="/qianDuanHtml/boke.html";
+                        window.location.href="/htmlTestSee/boke.html";
+                        // window.location.href="/qianDuanHtml/boke.html";
                     },
                     error : function(e){
                         alert("失敗是成功之母");
@@ -150,7 +150,8 @@ function insertTable(data){
         function bokeDetail(obj) {
             var bokeid=$(obj).find('input:eq(0)').val();
             // 通過id去查找 这个博客的 具体的信息  跳转页面
-            window.location.href = 'http://192.168.50.86:8090/qianDuanHtml/bokeDetail.html?id='+bokeid;
+            // window.location.href = 'http://192.168.50.86:8090/qianDuanHtml/bokeDetail.html?id='+bokeid;
+            window.location.href = "/htmlTestSee/bokeDetail.html?id="+bokeid;
         }
 
 
@@ -180,8 +181,8 @@ function deleteBoke(obj){
     var title=$(obj).find('input:eq(1)').val();
     var flag = confirm("确定要删除" + title + "的信息吗?");
     if(flag){
-        // var url = "http://49.234.232.172:8081/myBlog/boKe/deleteBoKe";
-        var url = "http://192.168.50.86:8090/myBlog/boKe/deleteBoKe";
+        var url = "http://49.234.232.172:8081/myBlog/boKe/deleteBoKe";
+        // var url = "http://192.168.50.86:8090/myBlog/boKe/deleteBoKe";
         $.ajax({
             url : url,
             cache: false,
@@ -191,8 +192,8 @@ function deleteBoke(obj){
             dataType : "json",
             success : function(data){
                 alert("已经丢进垃圾桶~~~");
-                // window.location.href="/htmlTestSee/boke.html";
-                window.location.href="/qianDuanHtml/boke.html";
+                window.location.href="/htmlTestSee/boke.html";
+                // window.location.href="/qianDuanHtml/boke.html";
             },
             error : function(e){
                 alert("失敗是成功之母");
@@ -205,7 +206,8 @@ function deleteBoke(obj){
 function bokeDetail(obj) {
     var bokeid=$(obj).find('input:eq(0)').val();
     // 通過id去查找 这个博客的 具体的信息  跳转页面
-    window.location.href = 'http://192.168.50.86:8090/qianDuanHtml/bokeDetail.html?id='+bokeid;
+    // window.location.href = 'http://192.168.50.86:8090/qianDuanHtml/bokeDetail.html?id='+bokeid;
+    window.location.href = "/htmlTestSee/bokeDetail.html?id="+bokeid;
 }
 
   
