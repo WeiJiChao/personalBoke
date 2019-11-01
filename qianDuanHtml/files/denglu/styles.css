@@ -13,11 +13,11 @@
   z-index:0;
 }
 #u0_img {
-  position:absolute;
-  left:0px;
-  top:0px;
-  width:1300px;
-  height:700px;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
 }
 #u0 {
   position:absolute;
